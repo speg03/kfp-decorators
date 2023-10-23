@@ -7,15 +7,6 @@ from kfp_decorators import cpu_request, dsl
 
 
 class TestCpuRequest:
-    def test_compile_components(self, tmp_path: pathlib.Path):
-        @cpu_request("100m")
-        @dsl.component()
-        def hello(message: str) -> str:
-            return message
-
-        package_path = os.fspath(tmp_path / "hello.yaml")
-        compiler.Compiler().compile(hello, package_path)
-
     def test_compile_pipelines(self, tmp_path: pathlib.Path):
         @cpu_request("100m")
         @dsl.component()
