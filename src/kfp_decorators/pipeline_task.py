@@ -1,18 +1,10 @@
-import functools
-from typing import Callable, cast
+from typing import Callable
 
-from kfp import dsl
-from kfp.dsl.base_component import BaseComponent
+from .components import BaseComponent, CustomizedComponent
 
 
 def cpu_request(cpu_request: str) -> Callable[[BaseComponent], BaseComponent]:
     def _decorator(fn: BaseComponent) -> BaseComponent:
-        @functools.wraps(fn)
-        def _wrapper(*args, **kwargs) -> dsl.PipelineTask:
-            task = fn(*args, **kwargs)
-            task.set_cpu_request(cpu_request)
-            return task
-
-        return cast(BaseComponent, _wrapper)
+        return CustomizedComponent(fn, lambda task: task.set_cpu_request(cpu_request))
 
     return _decorator
