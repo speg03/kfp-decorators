@@ -30,3 +30,12 @@ def cpu_request(cpu_request: str) -> ComponentDecorator:
         return CustomizedComponent(fn, lambda task: task.set_cpu_request(cpu_request))
 
     return _decorator
+
+
+def memory_request(memory_request: str) -> ComponentDecorator:
+    def _decorator(fn: BaseComponent) -> BaseComponent:
+        return CustomizedComponent(
+            fn, lambda task: task.set_memory_request(memory_request)
+        )
+
+    return _decorator
