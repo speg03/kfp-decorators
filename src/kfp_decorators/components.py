@@ -16,7 +16,7 @@ class CustomizedComponent(BaseComponent):
     def __call__(self, *args, **kwargs):
         task = self.component(*args, **kwargs)
         if self.customize_fn:
-            self.customize_fn(task)
+            return self.customize_fn(task)
         return task
 
     def execute(self, *args, **kwargs):
