@@ -43,3 +43,6 @@ version-file = "src/kfp_decorators/_version.py"
 
 [tool.pytest.ini_options]
 addopts = "--cov=kfp_decorators --cov-report=term-missing --cov-report=xml"
+
+[tool.coverage.run]
+omit = ["src/kfp_decorators/_version.py"]
