@@ -1,7 +1,7 @@
-from typing import Callable, TypeAlias
+from typing import Callable
 
 from kfp import dsl
 from kfp.dsl.base_component import BaseComponent
 
-ComponentDecorator: TypeAlias = Callable[[BaseComponent], BaseComponent]
-CustomizeFunction: TypeAlias = Callable[[dsl.PipelineTask], dsl.PipelineTask]
+ComponentDecorator = Callable[[BaseComponent], BaseComponent]
+CustomizeFunction = Callable[[dsl.PipelineTask], dsl.PipelineTask]
