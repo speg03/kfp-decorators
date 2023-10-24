@@ -5,7 +5,7 @@ import kfp.dsl as kfp_dsl
 import yaml
 from kfp import compiler
 from kfp_decorators import dsl
-from kfp_decorators.components import BaseComponent
+from kfp_decorators.pipeline_task import BaseComponent
 
 
 class TestComponent:
