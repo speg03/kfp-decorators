@@ -1,14 +1,13 @@
-from typing import Callable, Optional
+from typing import Optional
 
-from kfp import dsl
-from kfp.dsl.base_component import BaseComponent
+from .types import BaseComponent, ComponentDecorator, CustomizeFunction
 
 
 class CustomizedComponent(BaseComponent):
     def __init__(
         self,
         component: BaseComponent,
-        customize_fn: Optional[Callable[[dsl.PipelineTask], dsl.PipelineTask]] = None,
+        customize_fn: Optional[CustomizeFunction] = None,
     ):
         self.component = component
         self.customize_fn = customize_fn
@@ -26,7 +25,7 @@ class CustomizedComponent(BaseComponent):
         return getattr(self.component, name)
 
 
-def cpu_request(cpu_request: str) -> Callable[[BaseComponent], BaseComponent]:
+def cpu_request(cpu_request: str) -> ComponentDecorator:
     def _decorator(fn: BaseComponent) -> BaseComponent:
         return CustomizedComponent(fn, lambda task: task.set_cpu_request(cpu_request))
 

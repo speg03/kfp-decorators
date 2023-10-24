@@ -1,16 +1,16 @@
 import os
 import pathlib
-from typing import Callable
 
 import yaml
 from kfp import compiler
 from kfp_decorators import cpu_request, dsl
-from kfp_decorators.pipeline_task import BaseComponent, CustomizedComponent
+from kfp_decorators.pipeline_task import CustomizedComponent
+from kfp_decorators.types import BaseComponent, ComponentDecorator
 
 
 class TestCustomizedComponent:
     def customized_component(self) -> BaseComponent:
-        def customize_decorator() -> Callable[[BaseComponent], BaseComponent]:
+        def customize_decorator() -> ComponentDecorator:
             def _decorator(fn: BaseComponent) -> BaseComponent:
                 return CustomizedComponent(fn)
 
