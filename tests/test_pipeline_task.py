@@ -34,33 +34,18 @@ class TestCustomizedComponent:
         return hello
 
     @pytest.fixture
-    def customized_pipeline(self) -> BaseComponent:
-        def customize_decorator() -> ComponentDecorator:
-            def _decorator(fn: BaseComponent) -> BaseComponent:
-                return CustomizedComponent(fn)
-
-            return _decorator
-
-        @customize_decorator()
-        @dsl.component()
-        def hello(message: str) -> str:
-            return message
-
+    def customized_pipeline(self, customized_component: BaseComponent) -> BaseComponent:
         @dsl.pipeline(name="hello")
         def hello_pipeline(message: str = "hello") -> None:
-            hello(message=message)
+            customized_component(message=message)
 
         return hello_pipeline
 
     @pytest.fixture
-    def origin_pipeline(self) -> BaseComponent:
-        @dsl.component()
-        def hello(message: str) -> str:
-            return message
-
+    def origin_pipeline(self, origin_component: BaseComponent) -> BaseComponent:
         @dsl.pipeline(name="hello")
         def hello_pipeline(message: str = "hello") -> None:
-            hello(message=message)
+            origin_component(message=message)
 
         return hello_pipeline
 
