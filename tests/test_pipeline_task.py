@@ -3,7 +3,7 @@ import pathlib
 
 import yaml
 from kfp import compiler
-from kfp_decorators import cpu_request, dsl, memory_request
+from kfp_decorators import chain, cpu_request, dsl, memory_request
 from kfp_decorators.pipeline_task import CustomizedComponent
 from kfp_decorators.types import BaseComponent, ComponentDecorator
 
@@ -46,6 +46,30 @@ class TestCustomizedComponent:
         assert compiled_customized_component == compiled_origin_component
 
 
+class TestChain:
+    def test_compile_pipelines(self, tmp_path: pathlib.Path):
+        default_resource = chain(cpu_request("100m"), memory_request("100Mi"))
+
+        @default_resource
+        @dsl.component()
+        def hello(message: str) -> str:
+            return message
+
+        @dsl.pipeline(name="hello")
+        def hello_pipeline(message: str = "hello") -> None:
+            hello(message=message)
+
+        package_path = os.fspath(tmp_path / "hello_pipeline.yaml")
+        compiler.Compiler().compile(hello_pipeline, package_path)
+
+        with open(package_path, "r") as f:
+            pipeline = yaml.safe_load(f)
+
+        executor = pipeline["deploymentSpec"]["executors"]["exec-hello"]
+        assert executor["container"]["resources"]["cpuRequest"] == 0.1
+        assert executor["container"]["resources"]["memoryRequest"] == 0.1048576
+
+
 class TestCpuRequest:
     def test_compile_pipelines(self, tmp_path: pathlib.Path):
         @cpu_request("100m")
@@ -63,12 +87,8 @@ class TestCpuRequest:
         with open(package_path, "r") as f:
             pipeline = yaml.safe_load(f)
 
-        assert (
-            pipeline["deploymentSpec"]["executors"]["exec-hello"]["container"][
-                "resources"
-            ]["cpuRequest"]
-            == 0.1
-        )
+        executor = pipeline["deploymentSpec"]["executors"]["exec-hello"]
+        assert executor["container"]["resources"]["cpuRequest"] == 0.1
 
 
 class TestMemoryRequest:
@@ -88,9 +108,5 @@ class TestMemoryRequest:
         with open(package_path, "r") as f:
             pipeline = yaml.safe_load(f)
 
-        assert (
-            pipeline["deploymentSpec"]["executors"]["exec-hello"]["container"][
-                "resources"
-            ]["memoryRequest"]
-            == 0.1048576
-        )
+        executor = pipeline["deploymentSpec"]["executors"]["exec-hello"]
+        assert executor["container"]["resources"]["memoryRequest"] == 0.1048576

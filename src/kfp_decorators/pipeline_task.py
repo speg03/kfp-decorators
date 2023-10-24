@@ -1,3 +1,4 @@
+import functools
 from typing import Optional
 
 from .types import BaseComponent, ComponentDecorator, CustomizeFunction
@@ -23,6 +24,13 @@ class CustomizedComponent(BaseComponent):
 
     def __getattr__(self, name):
         return getattr(self.component, name)
+
+
+def chain(*components: ComponentDecorator) -> ComponentDecorator:
+    def _decorator(fn: BaseComponent) -> BaseComponent:
+        return functools.reduce(lambda x, f: f(x), components, fn)
+
+    return _decorator
 
 
 def cpu_request(cpu_request: str) -> ComponentDecorator:
