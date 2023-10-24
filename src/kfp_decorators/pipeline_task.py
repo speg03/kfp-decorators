@@ -26,9 +26,9 @@ class CustomizedComponent(BaseComponent):
         return getattr(self.component, name)
 
 
-def chain(*components: ComponentDecorator) -> ComponentDecorator:
+def chain(*decorators: ComponentDecorator) -> ComponentDecorator:
     def _decorator(fn: BaseComponent) -> BaseComponent:
-        return functools.reduce(lambda x, f: f(x), components, fn)
+        return functools.reduce(lambda x, f: f(x), decorators, fn)
 
     return _decorator
 
